@@ -70,6 +70,7 @@ jobs:
             --hidden-import flask \
             --hidden-import flask_cors \
             --collect-all markitdown \
+            --collect-data magika \
             server.py
           cd ..
 
