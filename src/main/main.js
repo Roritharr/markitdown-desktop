@@ -19,7 +19,7 @@ function killPythonServer() {
 // Start Python server
 function startPythonServer() {
   const pythonExecutable = isDev
-    ? 'python'
+    ? 'python3'
     : path.join(process.resourcesPath, 'python', 'markitdown-server');
 
   const args = isDev ? [path.join(__dirname, '..', '..', 'python', 'server.py')] : [];
