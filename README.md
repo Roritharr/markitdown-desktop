@@ -1,7 +1,7 @@
 # Markitdown Desktop
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://github.com/mariohachemer/markitdown-desktop/workflows/Build%20and%20Release/badge.svg)](https://github.com/mariohachemer/markitdown-desktop/actions)
+[![Build Status](https://github.com/Roritharr/markitdown-desktop/workflows/Build%20and%20Release/badge.svg)](https://github.com/Roritharr/markitdown-desktop/actions)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey)](https://github.com/mariohachemer/markitdown-desktop/releases)
 
 A cross-platform desktop application wrapper for Microsoft's [Markitdown](https://github.com/microsoft/markitdown) converter. Convert various document formats to Markdown with a simple drag-and-drop interface.
@@ -31,7 +31,7 @@ A cross-platform desktop application wrapper for Microsoft's [Markitdown](https:
 
 ### Download Pre-built Binaries
 
-Download the latest release for your platform from the [Releases](https://github.com/mariohachemer/markitdown-desktop/releases) page:
+Download the latest release for your platform from the [Releases](https://github.com/Roritharr/markitdown-desktop/releases) page:
 
 - **macOS**: Download `.dmg` file
 - **Windows**: Download `.exe` installer
@@ -42,7 +42,7 @@ Download the latest release for your platform from the [Releases](https://github
 #### Quick Setup (Recommended)
 
 ```bash
-git clone https://github.com/mariohachemer/markitdown-desktop.git
+git clone https://github.com/Roritharr/markitdown-desktop.git
 cd markitdown-desktop
 ./setup.sh
 ```
@@ -65,7 +65,7 @@ The setup script will automatically:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/mariohachemer/markitdown-desktop.git
+git clone https://github.com/Roritharr/markitdown-desktop.git
 cd markitdown-desktop
 ```
 
@@ -212,8 +212,8 @@ If macOS blocks the app:
 
 ## Support
 
-- **Bug Reports**: [Open an issue](https://github.com/mariohachemer/markitdown-desktop/issues)
-- **Feature Requests**: [Start a discussion](https://github.com/mariohachemer/markitdown-desktop/discussions)
+- **Bug Reports**: [Open an issue](https://github.com/Roritharr/markitdown-desktop/issues)
+- **Feature Requests**: [Start a discussion](https://github.com/Roritharr/markitdown-desktop/discussions)
 - **Markitdown Issues**: Report to [Microsoft's repository](https://github.com/microsoft/markitdown/issues)
 
 ## Roadmap

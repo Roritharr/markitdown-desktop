@@ -81,6 +81,6 @@ appImage:
 
 publish:
   provider: github
-  owner: mariohachemer
+  owner: Roritharr
   repo: markitdown-desktop
   releaseType: draft
