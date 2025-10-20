@@ -1,0 +1,50 @@
+Markitdown Desktop
+Copyright (c) 2025 Mario Hachemer
+
+This software is an Electron wrapper for Microsoft's Markitdown converter.
+
+================================================================================
+THIRD-PARTY SOFTWARE NOTICES AND ATTRIBUTIONS
+================================================================================
+
+Markitdown
+----------
+Copyright (c) Microsoft Corporation
+Licensed under the MIT License
+Source: https://github.com/microsoft/markitdown
+
+This product includes software developed by Microsoft Corporation.
+The Markitdown library is used via pip package installation and is not
+modified from its original form. Full license text can be found in
+LICENSE-MARKITDOWN.
+
+================================================================================
+
+Electron
+--------
+Copyright (c) Electron contributors
+Copyright (c) 2013-2020 GitHub Inc.
+Licensed under the MIT License
+Source: https://github.com/electron/electron
+
+================================================================================
+
+Flask
+-----
+Copyright (c) 2010 by the Pallets team
+Licensed under the BSD 3-Clause License
+Source: https://github.com/pallets/flask
+
+================================================================================
+
+Additional Dependencies
+-----------------------
+This software also includes various npm and Python packages, each with their
+own licenses. Please refer to the package.json and requirements.txt files for
+a complete list of dependencies.
+
+================================================================================
+
+All third-party software included in this project is used in accordance with
+their respective licenses. The inclusion of these libraries does not imply
+endorsement by their original authors.

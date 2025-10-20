@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'">
+  <title>Markitdown Desktop - Document to Markdown Converter</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <h1>Markitdown Desktop</h1>
+      <p class="subtitle">Convert documents to Markdown with ease</p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Drop Zone -->
+      <div class="drop-zone" id="dropZone">
+        <div class="drop-zone-content">
+          <svg class="upload-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <p class="drop-text">Drag & drop your file here</p>
+          <p class="drop-subtext">or</p>
+          <button class="browse-btn" id="browseBtn">Browse Files</button>
+          <p class="supported-formats">
+            Supported: PDF, Word, PowerPoint, Excel, HTML, Markdown, Text, and more
+          </p>
+        </div>
+      </div>
+
+      <!-- Status Messages -->
+      <div class="status-container" id="statusContainer" style="display: none;">
+        <div class="status-message" id="statusMessage"></div>
+      </div>
+
+      <!-- Preview Container -->
+      <div class="preview-container" id="previewContainer" style="display: none;">
+        <div class="preview-header">
+          <h2>Converted Markdown</h2>
+          <div class="preview-actions">
+            <button class="action-btn copy-btn" id="copyBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              Copy
+            </button>
+            <button class="action-btn save-btn" id="saveBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              Save
+            </button>
+            <button class="action-btn clear-btn" id="clearBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              Clear
+            </button>
+          </div>
+        </div>
+        <div class="preview-content">
+          <pre id="markdownPreview" class="markdown-preview"></pre>
+        </div>
+      </div>
+
+      <!-- Server Status Indicator -->
+      <div class="server-status" id="serverStatus">
+        <div class="status-indicator" id="statusIndicator"></div>
+        <span id="statusText">Checking server...</span>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Powered by Microsoft's <a href="https://github.com/microsoft/markitdown" target="_blank">Markitdown</a></p>
+      <p class="version">Version 1.0.0 | MIT License</p>
+    </footer>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

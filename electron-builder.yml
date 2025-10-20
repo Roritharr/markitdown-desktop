@@ -1,0 +1,86 @@
+appId: com.mariohachemer.markitdown-desktop
+productName: Markitdown Desktop
+copyright: Copyright © 2025 Mario Hachemer
+
+directories:
+  output: dist
+  buildResources: build
+
+files:
+  - "src/**/*"
+  - "node_modules/**/*"
+  - "!python/**/*"
+  - "!**/*.py"
+  - "!**/*.pyc"
+  - "!**/__pycache__"
+  - "!dist/**/*"
+  - "!.github/**/*"
+
+extraResources:
+  - from: "python/dist/"
+    to: "python/"
+    filter: ["**/*"]
+
+mac:
+  category: public.app-category.productivity
+  icon: resources/icons/icon.icns
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+    - target: zip
+      arch:
+        - x64
+        - arm64
+
+win:
+  icon: resources/icons/icon.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+  publisherName: Mario Hachemer
+  verifyUpdateCodeSignature: false
+
+linux:
+  category: Utility
+  icon: resources/icons
+  target:
+    - AppImage
+    - deb
+    - rpm
+
+nsis:
+  oneClick: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Markitdown Desktop
+
+dmg:
+  title: Markitdown Desktop
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: link
+      path: /Applications
+
+appImage:
+  systemIntegration: ask
+
+publish:
+  provider: github
+  owner: mariohachemer
+  repo: markitdown-desktop
+  releaseType: draft

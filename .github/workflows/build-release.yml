@@ -1,0 +1,244 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        default: 'draft'
+        type: choice
+        options:
+          - draft
+          - prerelease
+          - release
+
+jobs:
+  build:
+    name: Build for ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        include:
+          - os: macos-latest
+            platform: mac
+          - os: windows-latest
+            platform: win
+          - os: ubuntu-latest
+            platform: linux
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install UV
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Python dependencies with UV
+        run: |
+          cd python
+          uv pip install --system -r requirements.txt
+
+      - name: Build Python executable with PyInstaller
+        run: |
+          cd python
+          pyinstaller --onefile \
+            --name markitdown-server \
+            --hidden-import markitdown \
+            --hidden-import flask \
+            --hidden-import flask_cors \
+            --collect-all markitdown \
+            server.py
+          cd ..
+
+      # macOS Code Signing
+      - name: Import macOS certificates
+        if: |
+          matrix.os == 'macos-latest' &&
+          startsWith(github.ref, 'refs/tags/') &&
+          env.MAC_CERTS != ''
+        env:
+          MAC_CERTS: ${{ secrets.MAC_CERTS }}
+          MAC_CERTS_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
+        run: |
+          echo "Setting up macOS code signing..."
+          CERTIFICATE_PATH=$RUNNER_TEMP/certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+          # Import certificate
+          echo $MAC_CERTS | base64 --decode > $CERTIFICATE_PATH
+
+          # Create temporary keychain
+          security create-keychain -p "$MAC_CERTS_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$MAC_CERTS_PASSWORD" $KEYCHAIN_PATH
+
+          # Import certificate to keychain
+          security import $CERTIFICATE_PATH -P "$MAC_CERTS_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+          # Clean up
+          rm -f $CERTIFICATE_PATH
+
+      # Windows Code Signing
+      - name: Import Windows certificate
+        if: |
+          matrix.os == 'windows-latest' &&
+          startsWith(github.ref, 'refs/tags/') &&
+          env.WIN_CERTS != ''
+        env:
+          WIN_CERTS: ${{ secrets.WIN_CERTS }}
+          WIN_CERTS_PASSWORD: ${{ secrets.WIN_CERTS_PASSWORD }}
+        run: |
+          $certificateBytes = [System.Convert]::FromBase64String($env:WIN_CERTS)
+          $certificatePath = Join-Path -Path $env:RUNNER_TEMP -ChildPath "certificate.pfx"
+          [System.IO.File]::WriteAllBytes($certificatePath, $certificateBytes)
+
+          $securePassword = ConvertTo-SecureString $env:WIN_CERTS_PASSWORD -AsPlainText -Force
+          Import-PfxCertificate -FilePath $certificatePath -CertStoreLocation Cert:\CurrentUser\My -Password $securePassword
+
+          Remove-Item -Path $certificatePath
+
+      # Build Electron app
+      - name: Build Electron app (macOS)
+        if: matrix.os == 'macos-latest'
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          CSC_LINK: ${{ secrets.MAC_CERTS }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm run dist:mac -- --publish never
+
+      - name: Build Electron app (Windows)
+        if: matrix.os == 'windows-latest'
+        env:
+          CSC_LINK: ${{ secrets.WIN_CERTS }}
+          CSC_KEY_PASSWORD: ${{ secrets.WIN_CERTS_PASSWORD }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm run dist:win -- --publish never
+
+      - name: Build Electron app (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm run dist -- --publish never
+
+      # Upload artifacts
+      - name: Upload macOS artifacts
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: mac-artifacts
+          path: |
+            dist/*.dmg
+            dist/*.zip
+            dist/latest-mac.yml
+
+      - name: Upload Windows artifacts
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: win-artifacts
+          path: |
+            dist/*.exe
+            dist/*.exe.blockmap
+            dist/latest.yml
+
+      - name: Upload Linux artifacts
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-artifacts
+          path: |
+            dist/*.AppImage
+            dist/*.deb
+            dist/*.rpm
+            dist/latest-linux.yml
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+
+      - name: List artifacts
+        run: ls -laR artifacts/
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Markitdown Desktop ${{ github.ref_name }}
+          draft: ${{ github.event.inputs.release_type == 'draft' }}
+          prerelease: ${{ github.event.inputs.release_type == 'prerelease' }}
+          body: |
+            # Markitdown Desktop ${{ github.ref_name }}
+
+            Desktop application for Microsoft's Markitdown converter.
+
+            ## Installation
+
+            ### macOS
+            - Download the `.dmg` file for your architecture (Intel or Apple Silicon)
+            - Open the DMG and drag the app to your Applications folder
+
+            ### Windows
+            - Download the `.exe` installer
+            - Run the installer and follow the setup wizard
+
+            ### Linux
+            - **AppImage**: Download, make executable with `chmod +x`, and run
+            - **DEB**: Install with `sudo dpkg -i markitdown-desktop_*.deb`
+            - **RPM**: Install with `sudo rpm -i markitdown-desktop-*.rpm`
+
+            ## Changes
+            <!-- Add release notes here -->
+
+            ## Credits
+            This is a wrapper for Microsoft's [Markitdown](https://github.com/microsoft/markitdown) converter.
+          files: |
+            artifacts/mac-artifacts/*.dmg
+            artifacts/mac-artifacts/*.zip
+            artifacts/win-artifacts/*.exe
+            artifacts/linux-artifacts/*.AppImage
+            artifacts/linux-artifacts/*.deb
+            artifacts/linux-artifacts/*.rpm

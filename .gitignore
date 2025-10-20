@@ -1,0 +1,72 @@
+# Dependencies
+node_modules/
+*.pyc
+__pycache__/
+.Python
+python/venv/
+python/env/
+python/.venv/
+
+# Build outputs
+dist/
+build/
+python/dist/
+python/build/
+*.spec
+
+# Electron
+electron-builder.env
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Testing
+coverage/
+.nyc_output
+.pytest_cache/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+.directory
+.Trash-*
+
+# Certificates (NEVER commit these!)
+*.p12
+*.pfx
+*.pem
+*.key
+*.cer
+*.crt
+
+# Package lock files (optional - you may want to commit these)
+# package-lock.json
+# yarn.lock

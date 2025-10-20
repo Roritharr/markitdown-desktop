@@ -1,0 +1,31 @@
+{
+  "name": "markitdown-desktop",
+  "version": "1.0.0",
+  "description": "Desktop application for Microsoft's Markitdown - Convert documents to Markdown",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "npm run build:python",
+    "build:python": "cd python && pyinstaller --onefile --name markitdown-server server.py",
+    "dist": "electron-builder",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "markdown",
+    "converter",
+    "document",
+    "pdf",
+    "docx",
+    "electron"
+  ],
+  "author": "Mario Hachemer",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^38.3.0",
+    "electron-builder": "^26.0.12"
+  }
+}
